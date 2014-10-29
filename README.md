@@ -1,36 +1,39 @@
-mongodb-server-aggregation
+cfs-server-aggregation
 ==========================
 
-Very simple implementation of some of mongodb aggregation framework functions for Meteor.
+Very simple implementation of some of **server-side** mongodb aggregation framework functions for cfs-collections Meteor.
 
-**Mongodb-server-aggregation** is a fork of [mongodb-aggregation](https://github.com/jhoxray/meteor-mongo-extensions)
-that do not expose the aggregation framework to the client, being available only on server side.
+**cfs-server-aggregation** is a fork of [meteor-mongo-server](https://github.com/zvictor/meteor-mongo-server) which is a fork of [mongodb-aggregation](https://github.com/jhoxray/meteor-mongo-extensions)
 
-It extends `Collection` with 3 methods so far, **mapReduce**, **distinct** and **aggregate**, so that you can do:
+This version is just converted from zvictors coffescript version to javascript and was altered, so it works on `FS.Collections`.
 
-```coffeescript
-    col = new Meteor.Collection "name"
+It extends `FS.Collection` with 3 methods so far, **mapReduce**, **distinct** and **aggregate**, so that you can do:
 
-    if Meteor.isServer
-        # mapReduce
-        map = function() {emit(this.Region, this.Amount);}
-        reduce = function(reg, am) { return Array.sum(am);};
+```javascript
+var col, result;
 
-        col.mapReduce map, reduce, {out: "out_collection_name", verbose: true}, (err,res)->
-            console.dir res.stats # statistics object for running mapReduce
-        
-        # distinct
-        result = col.distinct "Field Name"
-        console.dir result
+col = new Meteor.Collection("name");
 
-        #aggregate
-        result = col.aggregate pipeline
-        console.dir result
+if (Meteor.isServer) {
+  map = function() {emit(this.Region, this.Amount);}
+  reduce = function(reg, am) { return Array.sum(am);};
+  col.mapReduce(map, reduce, {
+    out: "out_collection_name",
+    verbose: true
+  }, function(err, res) {
+    return console.dir(res.stats);
+  });
+  result = col.distinct("Field Name");
+  console.dir(result);
+  result = col.aggregate(pipeline);
+  console.dir(result);
+}
+
 ```
 
 To install it, run:
 ```bash
-$ mrt add mongodb-server-aggregation
+$ meteor add phosphoros:cfs-server-aggregation
 ```
 
 This package is MIT Licensed. Do whatever you like with it but any responsibility for doing so is your own.
